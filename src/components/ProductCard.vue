@@ -8,42 +8,33 @@
 
     <div class="product-image-section">
       <div class="product-image">
-        <img 
-          :src="product.images" 
-          :alt="product.name"
-          @error="handleImageError"
-          class="product-img"
-        >
+        <img :src="product.images" :alt="product.name" @error="handleImageError" class="product-img" />
         <div class="image-overlay">
           <button class="quick-view-btn" @click="handleQuickView">
-            <span class="eye-icon">👁️</span>
+            <span class="eye-icon"></span>
             Быстрый просмотр
           </button>
         </div>
       </div>
-      
+
       <div class="product-brand">
         <span class="brand-logo">🏷️</span>
         {{ product.brand }}
       </div>
     </div>
-    
+
     <div class="product-info">
       <div class="category-tag">
         {{ product.category }}
       </div>
-      
+
       <h3 class="product-title">{{ product.name }}</h3>
-      
+
       <p class="product-description">{{ product.shortDescription }}</p>
-      
+
       <div class="product-features">
         <div class="features-list">
-          <div 
-            v-for="(value, key) in limitedFeatures" 
-            :key="key"
-            class="feature-item"
-          >
+          <div v-for="(value, key) in limitedFeatures" :key="key" class="feature-item">
             <span class="feature-dot">•</span>
             <span class="feature-text">{{ key }}: {{ value }}</span>
           </div>
@@ -52,13 +43,13 @@
 
       <div class="rating-section">
         <div class="stars">
-          <span 
-            v-for="star in 5" 
-            :key="star" 
-            class="star" 
-            :class="{ 
-              'filled': star <= Math.floor(product.rating),
-              'half-filled': star === Math.ceil(product.rating) && product.rating % 1 !== 0
+          <span
+            v-for="star in 5"
+            :key="star"
+            class="star"
+            :class="{
+              filled: star <= Math.floor(product.rating),
+              'half-filled': star === Math.ceil(product.rating) && product.rating % 1 !== 0,
             }"
           >
             ⭐
@@ -75,22 +66,13 @@
       <div class="price-section">
         <div class="price-main">
           <span class="current-price">{{ formattedPrice }} ₽</span>
-          <span v-if="product.oldPrice" class="original-price">
-            {{ formattedOldPrice }} ₽
-          </span>
+          <span v-if="product.oldPrice" class="original-price"> {{ formattedOldPrice }} ₽ </span>
         </div>
-        <div v-if="monthlyPayment" class="installment-plan">
-          или {{ monthlyPayment }} ₽/мес
-        </div>
+        <div v-if="monthlyPayment" class="installment-plan">или {{ monthlyPayment }} ₽/мес</div>
       </div>
 
       <div class="action-buttons">
-        <button 
-          v-if="product.inStock"
-          class="add-to-cart-btn"
-          @click="handleAddToCart"
-          :disabled="addingToCart"
-        >
+        <button v-if="product.inStock" class="add-to-cart-btn" @click="handleAddToCart" :disabled="addingToCart">
           <span v-if="addingToCart" class="btn-loading">
             <div class="spinner"></div>
             Добавляем...
@@ -100,21 +82,23 @@
             В корзину
           </span>
         </button>
-        
+
         <button v-else class="notify-btn" @click="handleNotify">
           <span class="bell-icon"></span>
           Сообщить о поступлении
         </button>
-        
+
         <button class="wishlist-btn" @click="toggleWishlist" :class="{ 'in-wishlist': isInWishlist }">
           <span class="heart-icon">{{ isInWishlist ? '❤️' : '🤍' }}</span>
         </button>
       </div>
-      
-      <button class="details-btn" @click="handleQuickView">
-        <span class="info-icon"></span>
-        Подробнее
-      </button>
+
+      <router-link :to="`/product/${product.id}`" class="btn-outline">
+        <button class="details-btn" @click="goToProductDetail">
+          <span class="info-icon"></span>
+          Подробнее
+        </button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -122,83 +106,88 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import type { Product } from '../lib/products/types';
+import router from '@/router/router';
 
 interface Props {
-  product: Product
+  product: Product;
 }
 
 interface Emits {
-  (e: 'add-to-cart', product: Product): void
+  (e: 'add-to-cart', product: Product): void;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 // Состояния
-const addingToCart = ref(false)
-const isInWishlist = ref(false)
+const addingToCart = ref(false);
+const isInWishlist = ref(false);
 
 // Вычисляемые свойства
 const discountPercentage = computed(() => {
-  if (!props.product.oldPrice) return 0
-  return Math.round((1 - props.product.price / props.product.oldPrice) * 100)
-})
+  if (!props.product.oldPrice) return 0;
+  return Math.round((1 - props.product.price / props.product.oldPrice) * 100);
+});
 
 const formattedPrice = computed(() => {
-  return new Intl.NumberFormat('ru-RU').format(props.product.price)
-})
+  return new Intl.NumberFormat('ru-RU').format(props.product.price);
+});
 
 const formattedOldPrice = computed(() => {
-  if (!props.product.oldPrice) return ''
-  return new Intl.NumberFormat('ru-RU').format(props.product.oldPrice)
-})
+  if (!props.product.oldPrice) return '';
+  return new Intl.NumberFormat('ru-RU').format(props.product.oldPrice);
+});
 
 const monthlyPayment = computed(() => {
-  const monthly = Math.round(props.product.price / 12)
-  return new Intl.NumberFormat('ru-RU').format(monthly)
-})
+  const monthly = Math.round(props.product.price / 12);
+  return new Intl.NumberFormat('ru-RU').format(monthly);
+});
 
 const limitedFeatures = computed(() => {
-  const features = { ...props.product.features }
-  return Object.fromEntries(Object.entries(features).slice(0, 2))
-})
+  const features = { ...props.product.features };
+  return Object.fromEntries(Object.entries(features).slice(0, 2));
+});
 
 const isNew = computed(() => {
-  return props.product.id <= 3
-})
+  return props.product.id <= 3;
+});
 
 // Методы
 const handleAddToCart = async () => {
-  addingToCart.value = true
-  await new Promise(resolve => setTimeout(resolve, 800))
-  emit('add-to-cart', props.product)
-  addingToCart.value = false
+  addingToCart.value = true;
+  await new Promise((resolve) => setTimeout(resolve, 800));
+  emit('add-to-cart', props.product);
+  addingToCart.value = false;
+};
+
+const goToProductDetail = (): void => {
+  router.push(`/product/${props.product.id}`)
+  window.scrollTo({ top: 0, behavior: 'instant' })
 }
 
 const handleQuickView = () => {
   // Логика быстрого просмотра
-  console.log('Быстрый просмотр:', props.product.name)
-}
+};
 
 const handleNotify = () => {
-  alert(`Мы уведомим вас, когда "${props.product.name}" появится в наличии!`)
-}
+  alert(`Мы уведомим вас, когда "${props.product.name}" появится в наличии!`);
+};
 
 const toggleWishlist = () => {
-  isInWishlist.value = !isInWishlist.value
-}
+  isInWishlist.value = !isInWishlist.value;
+};
 
 const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.src = '/images/placeholder.jpg'
-}
+  const target = event.target as HTMLImageElement;
+  target.src = '/images/placeholder.jpg';
+};
 </script>
 
 <style scoped>
 .product-card {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 20px;
-  box-shadow: 
+  box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.08),
     0 1px 3px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -210,7 +199,7 @@ const handleImageError = (event: Event) => {
 
 .product-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.15),
     0 8px 25px rgba(0, 0, 0, 0.1);
 }
@@ -500,7 +489,8 @@ const handleImageError = (event: Event) => {
   margin-bottom: 12px;
 }
 
-.add-to-cart-btn, .notify-btn {
+.add-to-cart-btn,
+.notify-btn {
   flex: 1;
   padding: 14px 20px;
   border: none;
@@ -568,11 +558,14 @@ const handleImageError = (event: Event) => {
   color: white;
 }
 
+.btn-outline{
+  text-decoration: none;
+}
+
 .details-btn {
   width: 100%;
   padding: 12px 20px;
   border: 2px solid #3498db;
-  background: transparent;
   color: #3498db;
   border-radius: 12px;
   font-weight: 600;
@@ -608,8 +601,12 @@ const handleImageError = (event: Event) => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Адаптивность */
@@ -617,24 +614,24 @@ const handleImageError = (event: Event) => {
   .product-card {
     margin: 0 8px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .wishlist-btn {
     width: 100%;
     height: 44px;
   }
-  
+
   .product-image {
     height: 160px;
   }
-  
+
   .product-info {
     padding: 0 16px;
   }
-  
+
   .product-footer {
     padding: 0 16px 16px;
   }
@@ -645,18 +642,18 @@ const handleImageError = (event: Event) => {
     flex-direction: column;
     gap: 4px;
   }
-  
+
   .badge {
     font-size: 0.7rem;
     padding: 4px 8px;
   }
-  
+
   .price-main {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
-  
+
   .rating-section {
     flex-direction: column;
     gap: 8px;
@@ -664,4 +661,3 @@ const handleImageError = (event: Event) => {
   }
 }
 </style>
-
