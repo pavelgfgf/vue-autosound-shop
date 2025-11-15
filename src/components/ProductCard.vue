@@ -9,12 +9,6 @@
     <div class="product-image-section">
       <div class="product-image">
         <img :src="product.images" :alt="product.name" @error="handleImageError" class="product-img" />
-        <div class="image-overlay">
-          <button class="quick-view-btn" @click="handleQuickView">
-            <span class="eye-icon"></span>
-            Быстрый просмотр
-          </button>
-        </div>
       </div>
 
       <div class="product-brand">
@@ -36,7 +30,10 @@
         <div class="features-list">
           <div v-for="(value, key) in limitedFeatures" :key="key" class="feature-item">
             <span class="feature-dot">•</span>
-            <span class="feature-text">{{ key }}: {{ value }}</span>
+            <span class="feature-text">
+              <span>{{ getFeatureLabel(String(key)) }}:</span>
+              <span>{{ value }}</span>
+            </span>
           </div>
         </div>
       </div>
@@ -107,6 +104,7 @@
 import { computed, ref } from 'vue';
 import type { Product } from '../lib/products/types';
 import router from '@/router/router';
+import { featureLabels } from '@/lib/products/labels';
 
 interface Props {
   product: Product;
@@ -148,6 +146,10 @@ const limitedFeatures = computed(() => {
   return Object.fromEntries(Object.entries(features).slice(0, 2));
 });
 
+const getFeatureLabel = (key: string): string => {
+  return featureLabels[key as keyof typeof featureLabels] || key;
+}
+
 const isNew = computed(() => {
   return props.product.id <= 3;
 });
@@ -161,9 +163,9 @@ const handleAddToCart = async () => {
 };
 
 const goToProductDetail = (): void => {
-  router.push(`/product/${props.product.id}`)
-  window.scrollTo({ top: 0, behavior: 'instant' })
-}
+  router.push(`/product/${props.product.id}`);
+  window.scrollTo({ top: 0, behavior: 'instant' });
+};
 
 const handleQuickView = () => {
   // Логика быстрого просмотра
@@ -558,7 +560,7 @@ const handleImageError = (event: Event) => {
   color: white;
 }
 
-.btn-outline{
+.btn-outline {
   text-decoration: none;
 }
 

@@ -3,9 +3,9 @@
     <div class="container" v-if="product">
       <!-- Хлебные крошки -->
       <nav class="breadcrumbs">
-        <router-link to="/" class="breadcrumb-link">🏠 Главная</router-link>
+        <router-link to="/" class="breadcrumb-link">Главная</router-link>
         <span class="breadcrumb-separator">›</span>
-        <router-link to="/catalog" class="breadcrumb-link">🎵 Каталог</router-link>
+        <router-link to="/catalog" class="breadcrumb-link">Каталог</router-link>
         <span class="breadcrumb-separator">›</span>
         <span class="breadcrumb-current">{{ product.category }}</span>
         <span class="breadcrumb-separator">›</span>
@@ -16,11 +16,7 @@
         <!-- Галерея изображений -->
         <div class="product-gallery">
           <div class="main-image">
-            <img 
-              :src="product.images" 
-              :alt="product.name" 
-              class="product-main-img"
-            />
+            <img :src="product.images" :alt="product.name" class="product-main-img" />
             <div class="image-badges">
               <span v-if="!product.inStock" class="badge stock-badge">🔴 Нет в наличии</span>
               <span v-if="product.oldPrice" class="badge sale-badge">🔥 Скидка {{ discountPercentage }}%</span>
@@ -28,7 +24,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Основная информация -->
         <div class="product-main-info">
           <div class="product-header">
@@ -43,15 +39,10 @@
           <!-- Рейтинг и отзывы -->
           <div class="rating-section">
             <div class="stars">
-              <span 
-                v-for="star in 5" 
-                :key="star" 
-                class="star" 
-                :class="{ 
-                  'filled': star <= Math.floor(product.rating),
-                  'half-filled': star === Math.ceil(product.rating) && product.rating % 1 !== 0
-                }"
-              >
+              <span v-for="star in 5" :key="star" class="star" :class="{
+                'filled': star <= Math.floor(product.rating),
+                'half-filled': star === Math.ceil(product.rating) && product.rating % 1 !== 0
+              }">
                 ⭐
               </span>
             </div>
@@ -84,12 +75,7 @@
             </div>
 
             <div class="action-buttons">
-              <button 
-                v-if="product.inStock"
-                class="add-to-cart-btn"
-                @click="addToCart"
-                :disabled="addingToCart"
-              >
+              <button v-if="product.inStock" class="add-to-cart-btn" @click="addToCart" :disabled="addingToCart">
                 <span v-if="addingToCart" class="btn-loading">
                   <div class="spinner"></div>
                   Добавляем...
@@ -98,7 +84,7 @@
                   🛒 Добавить в корзину
                 </span>
               </button>
-              
+
               <button v-else class="notify-btn" @click="handleNotify">
                 🔔 Уведомить о поступлении
               </button>
@@ -138,12 +124,8 @@
       <!-- Детальная информация -->
       <div class="product-details">
         <div class="details-tabs">
-          <button 
-            v-for="tab in tabs" 
-            :key="tab.id"
-            :class="['tab-btn', { active: activeTab === tab.id }]"
-            @click="activeTab = tab.id"
-          >
+          <button v-for="tab in tabs" :key="tab.id" :class="['tab-btn', { active: activeTab === tab.id }]"
+            @click="activeTab = tab.id">
             {{ tab.icon }} {{ tab.title }}
           </button>
         </div>
@@ -151,42 +133,34 @@
         <div class="tab-content">
           <!-- Характеристики -->
           <div v-if="activeTab === 'specs'" class="specs-grid">
-            <div 
-              v-for="(value, key) in product.features" 
-              :key="key"
-              class="spec-item"
-            >
-              <span class="spec-name">{{ key }}</span>
+            <div v-for="(value, key) in product.features" :key="key" class="spec-item">
+              <span class="spec-name">{{ getFeatureLabel(key) }}</span>
               <span class="spec-value">{{ value }}</span>
             </div>
           </div>
 
           <!-- Описание -->
-          <div v-if="activeTab === 'description'" class="description-content">
+          <div v-else-if="activeTab === 'description'" class="description-content">
             <h3>Подробное описание</h3>
             <p>{{ product.description }}</p>
             <div class="features-list">
-              <h4>Основные преимущества:</h4>
+              <h4>Основные характеристики:</h4>
               <ul>
                 <li v-for="(value, key) in product.features" :key="key">
-                  <strong>{{ key }}:</strong> {{ value }}
+                  <strong>{{ getFeatureLabel(key) }}:</strong> {{ value }}
                 </li>
               </ul>
             </div>
           </div>
 
           <!-- Отзывы -->
-          <div v-if="activeTab === 'reviews'" class="reviews-content" id="reviews">
+          <div v-else-if="activeTab === 'reviews'" class="reviews-content" id="reviews">
             <div class="reviews-summary">
               <div class="overall-rating">
                 <div class="rating-big">{{ product.rating }}</div>
                 <div class="stars-big">
-                  <span 
-                    v-for="star in 5" 
-                    :key="star" 
-                    class="star" 
-                    :class="{ 'filled': star <= Math.floor(product.rating) }"
-                  >
+                  <span v-for="star in 5" :key="star" class="star"
+                    :class="{ 'filled': star <= Math.floor(product.rating) }">
                     ⭐
                   </span>
                 </div>
@@ -205,16 +179,12 @@
       <div class="related-products">
         <h2>🎯 Похожие товары</h2>
         <div class="related-grid">
-          <ProductCard 
-            v-for="relatedProduct in relatedProducts"
-            :key="relatedProduct.id"
-            :product="relatedProduct"
-            @add-to-cart="$emit('add-to-cart', relatedProduct)"
-          />
+          <ProductCard v-for="relatedProduct in relatedProducts" :key="relatedProduct.id" :product="relatedProduct"
+            @add-to-cart="$emit('add-to-cart', relatedProduct)" />
         </div>
       </div>
     </div>
-    
+
     <div v-else class="not-found">
       <div class="not-found-content">
         <div class="not-found-icon">😕</div>
@@ -233,6 +203,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import ProductCard from '../components/ProductCard.vue'
 import type { Product } from '../lib/products/types'
+import { featureLabels } from '@/lib/products/labels'
 
 interface Props {
   products: Product[]
@@ -298,7 +269,7 @@ const relatedProducts = computed(() => {
 // Методы
 const addToCart = async (): Promise<void> => {
   if (!product.value) return
-  
+
   addingToCart.value = true
   await new Promise(resolve => setTimeout(resolve, 800))
   emit('add-to-cart', product.value)
@@ -313,6 +284,10 @@ const handleNotify = (): void => {
 
 const toggleWishlist = (): void => {
   isInWishlist.value = !isInWishlist.value
+}
+
+const getFeatureLabel = (key: string): string => {
+  return featureLabels[key as keyof typeof featureLabels] || key;
 }
 </script>
 
@@ -388,7 +363,7 @@ const toggleWishlist = (): void => {
 
 .product-main-img {
   max-width: 100%;
-  max-height: 350px;
+  max-height: 300px;
   object-fit: contain;
 }
 
@@ -590,7 +565,8 @@ const toggleWishlist = (): void => {
   margin-bottom: 1.5rem;
 }
 
-.add-to-cart-btn, .notify-btn {
+.add-to-cart-btn,
+.notify-btn {
   flex: 1;
   padding: 16px 24px;
   border: none;
@@ -877,8 +853,13 @@ const toggleWishlist = (): void => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Кнопки */
@@ -910,11 +891,11 @@ const toggleWishlist = (): void => {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .details-tabs {
     flex-direction: column;
   }
-  
+
   .specs-grid {
     grid-template-columns: 1fr;
   }
@@ -924,28 +905,28 @@ const toggleWishlist = (): void => {
   .product-layout {
     padding: 1.5rem;
   }
-  
+
   .product-title {
     font-size: 1.5rem;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .wishlist-btn {
     width: 100%;
     height: 50px;
   }
-  
+
   .current-price {
     font-size: 2rem;
   }
-  
+
   .original-price {
     font-size: 1.2rem;
   }
-  
+
   .tab-content {
     padding: 1.5rem;
   }
@@ -955,15 +936,15 @@ const toggleWishlist = (): void => {
   .container {
     padding: 0 0.5rem;
   }
-  
+
   .product-layout {
     padding: 1rem;
   }
-  
+
   .breadcrumbs {
     font-size: 0.8rem;
   }
-  
+
   .delivery-item {
     flex-direction: column;
     text-align: center;

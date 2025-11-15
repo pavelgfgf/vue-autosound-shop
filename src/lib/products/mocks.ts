@@ -15,10 +15,10 @@ export const mockProducts: Product[] = [
     inStock: true,
     images: "/images/speakers2.webp",
     features: {
-      мощность: "80 Вт",
-      импеданс: "4 Ом",
-      чувствительность: "90 дБ",
-      частотныйДиапазон: "35-22000 Гц"
+      power: "80 Вт",
+      impedance: "4 Ом",
+      sensitivity: "90 дБ",
+      frequencyRange: "35-22000 Гц"
     },
     description: "Компонентная акустическая система с отличным звучанием",
     shortDescription: "2-полосная компонентная акустика"
@@ -36,10 +36,10 @@ export const mockProducts: Product[] = [
     inStock: true,
     images: '/images/speakers1.jpeg',
     features: {
-      мощность: "100 Вт",
-      импеданс: "4 Ом",
-      чувствительность: "88 дБ",
-      Диапазон: "65-22000 Гц"
+      power: "100 Вт",
+      impedance: "4 Ом",
+      sensitivity: "88 дБ",
+      frequencyRange: "65-22000 Гц"
     },
     description: "Коаксиальные динамики с сбалансированным звуком",
     shortDescription: "6.5-дюймовые коаксиальные динамики"
@@ -57,10 +57,10 @@ export const mockProducts: Product[] = [
     inStock: true,
     images: 'images/magnitola1.jpeg',
     features: {
-      экран: "6.8\" сенсорный",
-      беспроводныеТехнологии: "Bluetooth, Wi-Fi",
-      навигация: "Apple CarPlay, Android Auto",
-      видеоВходы: "2"
+      screen: "6.8\" сенсорный",
+      wireless: "Bluetooth, Wi-Fi",
+      navigation: "Apple CarPlay, Android Auto",
+      videoInputs: "2"
     },
     description: "Мультимедийная система с большим сенсорным экраном",
     shortDescription: "2DIN мультимедийная система"
@@ -78,10 +78,10 @@ export const mockProducts: Product[] = [
     inStock: false,
     images: "/images/jbl-stage-1210-1000.jpeg",
     features: {
-      мощность: "300 Вт",
-      диаметр: "10 дюймов",
-      сопротивление: "2 Ом",
-      типКорпуса: "закрытый"
+      power: "300 Вт",
+      diameter: "10 дюймов",
+      impedance: "2 Ом",
+      enclosureType: "закрытый"
     },
     description: "Активный сабвуфер с мощным усилителем",
     shortDescription: "10-дюймовый активный сабвуфер"
@@ -99,15 +99,15 @@ export const mockProducts: Product[] = [
     inStock: true,
     images: "/images/usil.webp",
     features: {
-      мощность: "4x100 Вт",
-      классУсиления: "D",
-      частотныйДиапазон: "10-25000 Гц",
-      регулировкаУровня: "есть"
+      power: "4x100 Вт",
+      amplifierClass: "D",
+      frequencyRange: "10-25000 Гц",
+      levelControl: "есть"
     },
     description: "Мощный 4-канальный усилитель класса D",
     shortDescription: "4-канальный усилитель мощности"
   },
-   {
+  {
     id: 6,
     name: "Pioneer DEH-S3200BT",
     category: "Головные Устройства",
@@ -120,15 +120,14 @@ export const mockProducts: Product[] = [
     inStock: true,
     images: "/images/magnitola2.webp",
     features: {
-      тип: "1DIN",
-      дисплей: "Монохромный",
-      беспроводныеТехнологии: "Bluetooth, USB",
-      мощность: "4x50 Вт",
-      выходы: "3 RCA",
-      поддержкаФорматов: "MP3, WMA, AAC"
+      type: "1DIN",
+      display: "Монохромный",
+      wireless: "Bluetooth, USB",
+      power: "4x50 Вт",
+      outputs: "3 RCA",
+      formatSupport: "MP3, WMA, AAC"
     },
     description: "Компактная магнитола с Bluetooth для качественного звука",
     shortDescription: "1DIN магнитола с Bluetooth"
-  },
-
+  }
 ];

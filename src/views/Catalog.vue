@@ -8,7 +8,7 @@
           Найдено: {{ filteredProducts.length }} из {{ products.length }} товаров
         </div>
       </div>
-      
+
       <!-- Панель фильтров -->
       <div class="filters-panel">
         <div class="filters-header">
@@ -17,7 +17,7 @@
             {{ showFilters ? 'Скрыть' : 'Показать' }} фильтры
           </button>
         </div>
-        
+
         <div v-if="showFilters" class="filters-grid">
           <!-- Фильтр по категории -->
           <div class="filter-group">
@@ -50,21 +50,11 @@
             <label class="filter-label">Цена, руб.</label>
             <div class="price-inputs">
               <div class="price-field">
-                <input 
-                  type="number" 
-                  v-model="minPrice" 
-                  placeholder="0"
-                  class="price-input"
-                >
+                <input type="number" v-model="minPrice" placeholder="0" class="price-input" />
                 <span class="price-label">от</span>
               </div>
               <div class="price-field">
-                <input 
-                  type="number" 
-                  v-model="maxPrice" 
-                  placeholder="50000"
-                  class="price-input"
-                >
+                <input type="number" v-model="maxPrice" placeholder="50000" class="price-input" />
                 <span class="price-label">до</span>
               </div>
             </div>
@@ -85,7 +75,7 @@
           <div class="filter-group checkbox-group">
             <label class="filter-label">Наличие</label>
             <label class="checkbox-label">
-              <input type="checkbox" v-model="onlyInStock">
+              <input type="checkbox" v-model="onlyInStock" />
               <span class="checkmark"></span>
               Только в наличии
             </label>
@@ -95,7 +85,7 @@
           <div class="filter-group checkbox-group">
             <label class="filter-label">Акции</label>
             <label class="checkbox-label">
-              <input type="checkbox" v-model="onlyOnSale">
+              <input type="checkbox" v-model="onlyOnSale" />
               <span class="checkmark"></span>
               Товары со скидкой
             </label>
@@ -103,19 +93,15 @@
 
           <!-- Кнопки управления -->
           <div class="filter-actions">
-            <button @click="resetFilters" class="btn btn-secondary">
-              Сбросить фильтры
-            </button>
-            <button @click="applyFilters" class="btn btn-primary">
-              Применить
-            </button>
+            <button @click="resetFilters" class="btn btn-secondary">Сбросить фильтры</button>
+            <button @click="applyFilters" class="btn btn-primary">Применить</button>
           </div>
         </div>
       </div>
 
       <!-- Быстрые фильтры -->
       <div class="quick-filters">
-        <button 
+        <button
           v-for="filter in quickFilters"
           :key="filter.key"
           @click="applyQuickFilter(filter)"
@@ -147,7 +133,7 @@
 
         <template v-else>
           <div class="products-grid">
-            <ProductCard 
+            <ProductCard
               v-for="product in sortedProducts"
               :key="product.id"
               :product="product"
@@ -160,9 +146,7 @@
             <div class="no-products-icon">😔</div>
             <h3>Товары не найдены</h3>
             <p>Попробуйте изменить параметры фильтрации</p>
-            <button @click="resetFilters" class="btn btn-primary">
-              Показать все товары
-            </button>
+            <button @click="resetFilters" class="btn btn-primary">Показать все товары</button>
           </div>
         </template>
       </div>
@@ -171,131 +155,134 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import ProductCard from '../components/ProductCard.vue'
-import type { Product } from '../lib/products/types'
+import { ref, computed, watch } from 'vue';
+import ProductCard from '../components/ProductCard.vue';
+import type { Product } from '../lib/products/types';
 
 interface Props {
-  products: Product[]
+  products: Product[];
 }
 
 interface Emits {
-  (e: 'add-to-cart', product: Product): void
+  (e: 'add-to-cart', product: Product): void;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 // Состояния фильтров
-const showFilters = ref(true)
-const selectedCategory = ref<string>('')
-const selectedBrand = ref<string>('')
-const onlyInStock = ref<boolean>(false)
-const onlyOnSale = ref<boolean>(false)
-const minPrice = ref<number | null>(null)
-const maxPrice = ref<number | null>(null)
-const minRating = ref<number>(0)
-const sortBy = ref<string>('default')
-const loading = ref(false)
+const showFilters = ref(true);
+const selectedCategory = ref<string>('');
+const selectedBrand = ref<string>('');
+const onlyInStock = ref<boolean>(false);
+const onlyOnSale = ref<boolean>(false);
+const minPrice = ref<number | null>(null);
+const maxPrice = ref<number | null>(null);
+const minRating = ref<number>(0);
+const sortBy = ref<string>('default');
+const loading = ref(false);
 
 // Быстрые фильтры
 const quickFilters = [
   { key: 'in_stock', label: 'В наличии', emoji: '✅', filter: { onlyInStock: true } },
   { key: 'sale', label: 'Со скидкой', emoji: '🔥', filter: { onlyOnSale: true } },
   { key: 'top_rated', label: 'Топ рейтинг', emoji: '⭐', filter: { minRating: 4.5 } },
-  { key: 'budget', label: 'Бюджетные', emoji: '💰', filter: { maxPrice: 15000 } }
-]
+  { key: 'budget', label: 'Бюджетные', emoji: '💰', filter: { maxPrice: 15000 } },
+];
 
 // Отфильтрованные продукты
 const filteredProducts = computed(() => {
-  return props.products.filter(product => {
-    if (selectedCategory.value && product.category !== selectedCategory.value) return false
-    if (selectedBrand.value && product.brand !== selectedBrand.value) return false
-    if (onlyInStock.value && !product.inStock) return false
-    if (onlyOnSale.value && !product.oldPrice) return false
-    if (minPrice.value && product.price < minPrice.value) return false
-    if (maxPrice.value && product.price > maxPrice.value) return false
-    if (minRating.value && product.rating < minRating.value) return false
-    return true
-  })
-})
+  return props.products.filter((product) => {
+    if (selectedCategory.value && product.category !== selectedCategory.value) return false;
+    if (selectedBrand.value && product.brand !== selectedBrand.value) return false;
+    if (onlyInStock.value && !product.inStock) return false;
+    if (onlyOnSale.value && !product.oldPrice) return false;
+    if (minPrice.value && product.price < minPrice.value) return false;
+    if (maxPrice.value && product.price > maxPrice.value) return false;
+    if (minRating.value && product.rating < minRating.value) return false;
+    return true;
+  });
+});
 
 // Отсортированные продукты
 const sortedProducts = computed(() => {
-  const products = [...filteredProducts.value]
-  
+  const products = [...filteredProducts.value];
+
   switch (sortBy.value) {
     case 'price_asc':
-      return products.sort((a, b) => a.price - b.price)
+      return products.sort((a, b) => a.price - b.price);
     case 'price_desc':
-      return products.sort((a, b) => b.price - a.price)
+      return products.sort((a, b) => b.price - a.price);
     case 'rating':
-      return products.sort((a, b) => b.rating - a.rating)
+      return products.sort((a, b) => b.rating - a.rating);
     case 'name':
-      return products.sort((a, b) => a.name.localeCompare(b.name))
+      return products.sort((a, b) => a.name.localeCompare(b.name));
     default:
-      return products
+      return products;
   }
-})
+});
 
 // Методы
 const toggleFilters = () => {
-  showFilters.value = !showFilters.value
-}
+  showFilters.value = !showFilters.value;
+};
 
 const applyQuickFilter = (filter: any) => {
   if (filter.filter.onlyInStock !== undefined) {
-    onlyInStock.value = filter.filter.onlyInStock
+    onlyInStock.value = filter.filter.onlyInStock;
   }
   if (filter.filter.onlyOnSale !== undefined) {
-    onlyOnSale.value = filter.filter.onlyOnSale
+    onlyOnSale.value = filter.filter.onlyOnSale;
   }
   if (filter.filter.minRating !== undefined) {
-    minRating.value = filter.filter.minRating
+    minRating.value = filter.filter.minRating;
   }
   if (filter.filter.maxPrice !== undefined) {
-    maxPrice.value = filter.filter.maxPrice
+    maxPrice.value = filter.filter.maxPrice;
   }
-}
+};
 
 const isQuickFilterActive = (filter: any) => {
   if (filter.filter.onlyInStock !== undefined) {
-    return onlyInStock.value === filter.filter.onlyInStock
+    return onlyInStock.value === filter.filter.onlyInStock;
   }
   if (filter.filter.onlyOnSale !== undefined) {
-    return onlyOnSale.value === filter.filter.onlyOnSale
+    return onlyOnSale.value === filter.filter.onlyOnSale;
   }
   if (filter.filter.minRating !== undefined) {
-    return minRating.value === filter.filter.minRating
+    return minRating.value === filter.filter.minRating;
   }
   if (filter.filter.maxPrice !== undefined) {
-    return maxPrice.value === filter.filter.maxPrice
+    return maxPrice.value === filter.filter.maxPrice;
   }
-  return false
-}
+  return false;
+};
 
 const resetFilters = () => {
-  selectedCategory.value = ''
-  selectedBrand.value = ''
-  onlyInStock.value = false
-  onlyOnSale.value = false
-  minPrice.value = null
-  maxPrice.value = null
-  minRating.value = 0
-  sortBy.value = 'default'
-}
+  selectedCategory.value = '';
+  selectedBrand.value = '';
+  onlyInStock.value = false;
+  onlyOnSale.value = false;
+  minPrice.value = null;
+  maxPrice.value = null;
+  minRating.value = 0;
+  sortBy.value = 'default';
+};
 
 const applyFilters = () => {
   // Фильтры применяются автоматически через computed
-  showFilters.value = false
-}
+  showFilters.value = false;
+};
 
 // Автоматическое скрытие фильтров на мобильных
-watch(() => props.products, () => {
-  if (window.innerWidth < 768) {
-    showFilters.value = false
+watch(
+  () => props.products,
+  () => {
+    if (window.innerWidth < 768) {
+      showFilters.value = false;
+    }
   }
-})
+);
 </script>
 
 <style scoped>
@@ -319,7 +306,7 @@ watch(() => props.products, () => {
   padding: 1rem 0;
 }
 
-.catalog-title{
+.catalog-title {
   font-size: 2.5rem;
   font-weight: 700;
   color: #2c3e50;
@@ -339,7 +326,7 @@ watch(() => props.products, () => {
 .filters-panel {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   margin-bottom: 2rem;
   overflow: hidden;
 }
@@ -485,7 +472,7 @@ watch(() => props.products, () => {
   .price-filter-group {
     grid-column: span 1;
   }
-  
+
   .price-inputs {
     grid-template-columns: 1fr;
     gap: 0.5rem;
@@ -496,11 +483,11 @@ watch(() => props.products, () => {
   .filters-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .price-filter-group {
     grid-column: span 1;
   }
-  
+
   .price-inputs {
     grid-template-columns: 1fr 1fr;
   }
@@ -597,7 +584,7 @@ watch(() => props.products, () => {
   padding: 1rem 1.5rem;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .sort-label {
@@ -637,8 +624,12 @@ watch(() => props.products, () => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .products-grid {
@@ -652,7 +643,7 @@ watch(() => props.products, () => {
   padding: 4rem 2rem;
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .no-products-icon {
@@ -716,38 +707,38 @@ watch(() => props.products, () => {
     gap: 1rem;
     text-align: center;
   }
-  
+
   .catalog-title {
     font-size: 2rem;
   }
-  
+
   .filters-grid {
     grid-template-columns: 1fr;
     padding: 1.5rem;
   }
-  
+
   .filters-header {
     padding: 1rem 1.5rem;
   }
-  
+
   .products-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .sorting {
     flex-direction: column;
     align-items: stretch;
     gap: 0.5rem;
   }
-  
+
   .quick-filters {
     justify-content: center;
   }
-  
+
   .filter-actions {
     justify-content: stretch;
   }
-  
+
   .filter-actions .btn {
     flex: 1;
   }
@@ -757,11 +748,11 @@ watch(() => props.products, () => {
   .container {
     padding: 0 0.5rem;
   }
-  
+
   .catalog-title {
     font-size: 1.75rem;
   }
-  
+
   .filters-grid {
     padding: 1rem;
   }
