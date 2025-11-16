@@ -8,7 +8,7 @@
 
     <div class="product-image-section">
       <div class="product-image">
-        <img :src="product.images" :alt="product.name" @error="handleImageError" class="product-img" />
+        <img :src="product.images" :alt="product.name" class="product-img" />
       </div>
 
       <div class="product-brand">
@@ -175,10 +175,6 @@ const toggleWishlist = () => {
   isInWishlist.value = !isInWishlist.value;
 };
 
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement;
-  target.src = '/images/placeholder.jpg';
-};
 </script>
 
 <style scoped>

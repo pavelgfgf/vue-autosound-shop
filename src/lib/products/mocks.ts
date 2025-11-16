@@ -13,7 +13,7 @@ export const mockProducts: Product[] = [
     rating: 4.7,
     reviewsCount: 24,
     inStock: true,
-    images: "/images/speakers2.webp",
+    images: "/speakers2.webp",
     features: {
       power: "80 Вт",
       impedance: "4 Ом",
@@ -34,7 +34,7 @@ export const mockProducts: Product[] = [
     rating: 4.5,
     reviewsCount: 18,
     inStock: true,
-    images: '/images/speakers1.jpeg',
+    images: '/speakers1.jpeg',
     features: {
       power: "100 Вт",
       impedance: "4 Ом",
@@ -55,7 +55,7 @@ export const mockProducts: Product[] = [
     rating: 4.8,
     reviewsCount: 32,
     inStock: true,
-    images: '/images/magnitola1.jpeg',
+    images: '/magnitola1.jpeg',
     features: {
       screen: "6.8\" сенсорный",
       wireless: "Bluetooth, Wi-Fi",
@@ -76,7 +76,7 @@ export const mockProducts: Product[] = [
     rating: 4.6,
     reviewsCount: 15,
     inStock: false,
-    images: "/images/jbl-stage-1210-1000.jpeg",
+    images: "/jbl-stage-1210-1000.jpeg",
     features: {
       power: "300 Вт",
       diameter: "10 дюймов",
@@ -97,7 +97,7 @@ export const mockProducts: Product[] = [
     rating: 4.9,
     reviewsCount: 28,
     inStock: true,
-    images: "/images/usil.webp",
+    images: "/usil.webp",
     features: {
       power: "4x100 Вт",
       amplifierClass: "D",
@@ -118,7 +118,7 @@ export const mockProducts: Product[] = [
     rating: 4.4,
     reviewsCount: 56,
     inStock: true,
-    images: "/images/magnitola2.webp",
+    images: "/magnitola2.webp",
     features: {
       type: "1DIN",
       display: "Монохромный",
