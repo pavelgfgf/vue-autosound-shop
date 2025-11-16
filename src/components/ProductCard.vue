@@ -148,7 +148,7 @@ const limitedFeatures = computed(() => {
 
 const getFeatureLabel = (key: string): string => {
   return featureLabels[key as keyof typeof featureLabels] || key;
-}
+};
 
 const isNew = computed(() => {
   return props.product.id <= 3;
@@ -165,10 +165,6 @@ const handleAddToCart = async () => {
 const goToProductDetail = (): void => {
   router.push(`/product/${props.product.id}`);
   window.scrollTo({ top: 0, behavior: 'instant' });
-};
-
-const handleQuickView = () => {
-  // Логика быстрого просмотра
 };
 
 const handleNotify = () => {

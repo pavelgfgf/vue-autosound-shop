@@ -24,10 +24,10 @@
             <label class="filter-label">Категория</label>
             <select v-model="selectedCategory" class="filter-select">
               <option value="">Все категории</option>
-              <option value="акустика">Акустика</option>
-              <option value="головныеУстройства">Головные устройства</option>
-              <option value="сабвуферы">Сабвуферы</option>
-              <option value="усилители">Усилители</option>
+              <option value="Акустика">Акустика</option>
+              <option value="Головные Устройства">Головные устройства</option>
+              <option value="Сабвуферы">Сабвуферы</option>
+              <option value="Усилители">Усилители</option>
             </select>
           </div>
 
@@ -39,7 +39,6 @@
               <option value="Pioneer">Pioneer</option>
               <option value="Pride">Pride</option>
               <option value="Kenwood">Kenwood</option>
-              <option value="Sony">Sony</option>
               <option value="JBL">JBL</option>
               <option value="Hertz">Hertz</option>
             </select>
@@ -155,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import ProductCard from '../components/ProductCard.vue';
 import type { Product } from '../lib/products/types';
 
